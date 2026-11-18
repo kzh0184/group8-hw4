@@ -73,9 +73,24 @@ int main(int argc, char* argv[])
 		while (t != NULL)
 		{
 			cout << "Frame " << t->frame_num() << ": " << endl
-			     << " Score 1: " << t->score1() << endl
-			     << " Score 2: " << t->score2() << endl;
-			t = t->next_frame();
+	         << " Score 1: " << t->score1() << endl
+	         << " Score 2: " << t->score2() << endl;
+	
+	    	// Print extra roll for frame 10
+		    if (t->frame_num() == 10 &&
+		        (t->strike() || t->spare()))
+		    {
+		        int extra_roll = t->frame_score()
+		                       - t->score1()
+		                       - t->score2();
+		
+		        cout << " Bonus Roll: " << extra_roll << endl;
+		    }
+		
+		    cout << " Frame Score: "
+		         << t->frame_score() << endl;
+		
+		    t = t->next_frame();
 		}
 
 		cout << "Total Game Score for player " << (i + 1) << ": "
