@@ -1,7 +1,7 @@
 #include <iostream>
+#include <string>
 #include "bowling_frame.h"
 #include <random>
-#include <cstdlib>
 
 using namespace std;
 
@@ -27,21 +27,21 @@ int main(int argc, char* argv[])
 	if (argc < 2) ///error if no amount of players is given
 	{
 		cout << "Usage: ./a.out <num_players>"<< endl;
-		return 0;
+		return 1;
 	}
 	int num_player = stoi(argv[1]);
 
 	if (num_player < 1 || num_player > 3) ///error if the number of players is not between 1 and 3
 	{
 		cout << "Error: Number of players must be between 1 and 3" << endl;
-		return 0;
+		return 1;
 	}
 	
-	cout << "Player count: " << num_player << endl;//make frames
+	cout << "Player count is: " << num_player << endl;
 
+	//make frames
 	Bowling_Frame * players[3] = {nullptr, nullptr, nullptr};
 	
-
 	for (int i = 0; i < num_player; i++)
 	{
 		Bowling_Frame * frames[10];
@@ -58,15 +58,14 @@ int main(int argc, char* argv[])
 		players[i] = frames[0]; //store the first frame of each player in the players array
 	}
 
-	
-// update scores for each player
+	// update scores for each player
 	for (int i = 0; i < num_player; i++)
 	{
-		for (int k = 0; k < 20; k++)   // ~2 rolls × 10 frames
+		for (int k = 0; k < 30; k++)   // enough calls for 10 frames + 10th frame bonus rolls
 			players[i]->update_scores();
 	}
 
-// printing scores for each player
+	// printing scores for each player
 	for (int i = 0; i < num_player; i++)
 	{
 		Bowling_Frame* t = players[i];
@@ -75,11 +74,13 @@ int main(int argc, char* argv[])
 		{
 			cout << "Frame " << t->frame_num() << ": " << endl
 			     << " Score 1: " << t->score1() << endl
-		    	 << " Score 2: " << t->score2() << endl;
+			     << " Score 2: " << t->score2() << endl;
 			t = t->next_frame();
 		}
 
-	cout << "Total Game Score for player " << (i + 1) << ": " << current_game_total(players[i]) << endl << endl;
+		cout << "Total Game Score for player " << (i + 1) << ": "
+		     << current_game_total(players[i]) << endl;
 	}
-	
+
+	return 0;
 }
