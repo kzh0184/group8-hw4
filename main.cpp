@@ -75,19 +75,6 @@ int main(int argc, char* argv[])
 			cout << "Frame " << t->frame_num() << ": " << endl
 			     << " Score 1: " << t->score1() << endl
 			     << " Score 2: " << t->score2() << endl;
-
-			// 10th frame spare/strike: print bonus roll(s)
-			if (t->frame_num() == 10 && t->strike())
-			{
-				// strike: Score 2 is bonus 1, Score 3 is bonus 2
-				cout << " Score 3: " << t->score3() << endl;
-			}
-			else if (t->frame_num() == 10 && t->spare())
-			{
-				// spare: one bonus roll
-				cout << " Score 3: " << t->score3() << endl;
-			}
-
 			t = t->next_frame();
 		}
 
