@@ -54,40 +54,41 @@ int Bowling_Frame::frame_score()
 
 void Bowling_Frame::update_scores()
 {
-	struct Roll_State
+	struct RollState
     {
         Bowling_Frame* frame;
         int rolls[3];
         int count;
-        Roll_State* next;
+        RollState* next;
     };
-	static Roll_State* states = nullptr;
-	Roll_State* state = states;
 
-	while (state && state->frame != this)
-    {
+    static RollState* states = nullptr;
+
+    RollState* state = states;
+
+    while (state && state->frame != this)
         state = state->next;
-    }
 
-	if (!state)
+    if (!state)
     {
-        state = new Roll_State;
+        state = new RollState;
         state->frame = this;
         state->count = 0;
         state->next = states;
         states = state;
     }
 
-	int allowed = 2;
+    // Determine how many rolls are allowed
+    int allowed = 2;
 
-	if (frame_num_ < 10 &&
+    if (frame_num_ < 10 &&
         state->count > 0 &&
         state->rolls[0] == 10)
     {
         allowed = 1;
     }
 
-	if (frame_num_ == 10 && state->count >= 2)
+    if (frame_num_ == 10 && state->count >= 2)
     {
         if (state->rolls[0] == 10 ||
             state->rolls[0] + state->rolls[1] == 10)
@@ -96,7 +97,8 @@ void Bowling_Frame::update_scores()
         }
     }
 
-	if (state->count < allowed)
+    // Generate a roll
+    if (state->count < allowed)
     {
         int pins = 10;
 
@@ -106,7 +108,7 @@ void Bowling_Frame::update_scores()
             pins = 10 - state->rolls[0];
         }
 
-		if (frame_num_ == 10 &&
+        if (frame_num_ == 10 &&
             state->count == 2 &&
             state->rolls[0] == 10 &&
             state->rolls[1] != 10)
@@ -134,28 +136,28 @@ void Bowling_Frame::update_scores()
                   state->count >= 2 &&
                   score1_ + score2_ == 10);
     }
-	
-	Bowling_Frame* first = this;
 
-	while (first->prev_frame_)
-    {
+    // Recalculate scores for the whole game
+    Bowling_Frame* first = this;
+
+    while (first->prev_frame_)
         first = first->prev_frame_;
-    }
 
-	Bowling_Frame* current = first;
+    Bowling_Frame* current = first;
 
-	while (current)
+    while (current)
     {
-        Roll_State* current_state = states;
+        RollState* currentState = states;
 
-        while (current_state &&
-               current_state->frame != current)
+        while (currentState &&
+               currentState->frame != current)
         {
-            current_state = current_state->next;
+            currentState = currentState->next;
         }
 
-        if (current_state)
+        if (currentState)
         {
+            // Collect current and future rolls
             int rolls[21];
             int count = 0;
 
@@ -163,19 +165,15 @@ void Bowling_Frame::update_scores()
 
             while (temp)
             {
-                Roll_State* s = states;
+                RollState* s = states;
 
                 while (s && s->frame != temp)
-                {
                     s = s->next;
-                }
 
                 if (s)
                 {
                     for (int i = 0; i < s->count; i++)
-                    {
                         rolls[count++] = s->rolls[i];
-                    }
                 }
 
                 temp = temp->next_frame_;
@@ -185,14 +183,16 @@ void Bowling_Frame::update_scores()
 
             if (current->frame_num_ == 10)
             {
+                // Tenth frame: all actual rolls count
                 for (int i = 0;
-                     i < current_state->count; i++)
+                     i < currentState->count; i++)
                 {
-                    score += current_state->rolls[i];
+                    score += currentState->rolls[i];
                 }
             }
-            else if (current_state->rolls[0] == 10)
+            else if (currentState->rolls[0] == 10)
             {
+                // Strike: 10 + next two rolls
                 score = 10;
 
                 if (count > 1)
@@ -201,17 +201,24 @@ void Bowling_Frame::update_scores()
                 if (count > 2)
                     score += rolls[2];
             }
-            else if (current_state->count >= 2)
+            else if (currentState->count >= 2 &&
+                     currentState->rolls[0] +
+                     currentState->rolls[1] == 10)
             {
-                score = current_state->rolls[0] +
-                        current_state->rolls[1];
+                // Spare: 10 + next roll
+                score = 10;
 
-                if (score == 10 && count > 2)
+                if (count > 2)
                     score += rolls[2];
             }
             else
             {
-                score = current_state->rolls[0];
+                // Open frame
+                for (int i = 0;
+                     i < currentState->count; i++)
+                {
+                    score += currentState->rolls[i];
+                }
             }
 
             current->frame_score_ = score;
