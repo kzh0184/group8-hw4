@@ -27,14 +27,14 @@ int main(int argc, char* argv[])
 	if (argc < 2) ///error if no amount of players is given
 	{
 		cout << "Usage: ./a.out <num_players>"<< endl;
-		return 1;
+		return 0;
 	}
 	int num_player = stoi(argv[1]);
 
 	if (num_player < 1 || num_player > 3) ///error if the number of players is not between 1 and 3
 	{
 		cout << "Error: Number of players must be between 1 and 3" << endl;
-		return 1;
+		return 0;
 	}
 	
 	cout << "Player count is: " << num_player << endl;
