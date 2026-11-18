@@ -78,7 +78,6 @@ void Bowling_Frame::update_scores()
         states = state;
     }
 
-    // Determine how many rolls are allowed
     int allowed = 2;
 
     if (frame_num_ < 10 &&
@@ -97,7 +96,6 @@ void Bowling_Frame::update_scores()
         }
     }
 
-    // Generate a roll
     if (state->count < allowed)
     {
         int pins = 10;
@@ -137,7 +135,6 @@ void Bowling_Frame::update_scores()
                   score1_ + score2_ == 10);
     }
 
-    // Recalculate scores for the whole game
     Bowling_Frame* first = this;
 
     while (first->prev_frame_)
@@ -157,7 +154,6 @@ void Bowling_Frame::update_scores()
 
         if (currentState)
         {
-            // Collect current and future rolls
             int rolls[21];
             int count = 0;
 
@@ -183,7 +179,6 @@ void Bowling_Frame::update_scores()
 
             if (current->frame_num_ == 10)
             {
-                // Tenth frame: all actual rolls count
                 for (int i = 0;
                      i < currentState->count; i++)
                 {
@@ -192,7 +187,6 @@ void Bowling_Frame::update_scores()
             }
             else if (currentState->rolls[0] == 10)
             {
-                // Strike: 10 + next two rolls
                 score = 10;
 
                 if (count > 1)
@@ -205,7 +199,6 @@ void Bowling_Frame::update_scores()
                      currentState->rolls[0] +
                      currentState->rolls[1] == 10)
             {
-                // Spare: 10 + next roll
                 score = 10;
 
                 if (count > 2)
@@ -213,7 +206,6 @@ void Bowling_Frame::update_scores()
             }
             else
             {
-                // Open frame
                 for (int i = 0;
                      i < currentState->count; i++)
                 {
